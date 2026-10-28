@@ -127,4 +127,56 @@ class JobOfferController extends Controller
             'message' => 'Offre supprimée avec succès.',
         ]);
     }
+    //public home page offers
+    /**
+ * Afficher les offres approuvées avec recherche et pagination.
+ */
+/**
+ * Afficher les offres approuvées avec recherche et pagination.
+ */
+public function publicIndex(Request $request)
+{
+    $perPage = min(
+        max((int) $request->query('per_page', 8), 1),
+        24
+    );
+
+    $query = JobOffer::query()
+        ->where('status', 'published');
+
+    // Recherche par titre ou localisation
+    if ($request->filled('q')) {
+        $search = $request->query('q');
+
+        $query->where(function ($q) use ($search) {
+            $q->where('title', 'like', "%{$search}%")
+                ->orWhere('location', 'like', "%{$search}%");
+        });
+    }
+
+    // Filtrage par ville ou localisation
+    if ($request->filled('city')) {
+        $city = $request->query('city');
+
+        $query->where('location', 'like', "%{$city}%");
+    }
+
+    return response()->json(
+        $query->latest()->paginate($perPage)
+    );
+}
+public function publicShow($id)
+{
+    $offer = JobOffer::query()
+        ->where('status', 'published')
+        ->find($id);
+
+    if (!$offer) {
+        return response()->json([
+            'message' => 'Offre introuvable.',
+        ], 404);
+    }
+
+    return response()->json($offer);
+}
 }

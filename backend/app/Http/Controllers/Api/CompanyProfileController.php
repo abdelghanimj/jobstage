@@ -133,4 +133,24 @@ class CompanyProfileController extends Controller
             'message' => 'Entreprise supprimée avec succès.',
         ]);
     }
+    /**
+ * Afficher les entreprises publiquement.
+ */
+public function publicIndex()
+{
+    $companies = CompanyProfile::query()
+        ->select([
+            'id',
+            'company_name',
+            'logo_path',
+            'website',
+            'industry',
+            'city',
+            'description',
+        ])
+        ->latest()
+        ->paginate(10);
+
+    return response()->json($companies);
+}
 }

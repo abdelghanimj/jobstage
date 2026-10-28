@@ -9,10 +9,16 @@ use App\Http\Controllers\Api\AdminSettingController;
 use App\Http\Controllers\Api\CandidateProfileController;
 
 
-
+// Public routes - Home page
+Route::get('/offers', [JobOfferController::class, 'publicIndex']);
+Route::get('/offers/latest', [JobOfferController::class, 'latest']);
+Route::get('/companies', [App\Http\Controllers\Api\CompanyProfileController::class, 'publicIndex']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-
+Route::get('/offers/{id}', [
+    App\Http\Controllers\Api\JobOfferController::class,
+    'publicShow'
+]);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
